@@ -230,8 +230,11 @@
       id="beforeImage"
       style="
         width: 100%;
-        border-radius: 12px;
+        height: auto;
+      display: block;
+      border-radius: 12px;
       "
+      
       alt="Before hair color preview"
     >
   </div>
@@ -251,7 +254,9 @@
       id="generatedImage"
       style="
         width: 100%;
-        border-radius: 12px;
+        height: auto;
+      display: block;
+      border-radius: 12px;
       "
       alt="Generated hair color preview"
     >
@@ -379,8 +384,11 @@
           throw new Error(errorMessage);
         }
 
-        beforeImage.src = preview.src;
+        beforeImage.src = imageBase64;
         generatedImage.src = data.image;
+
+        beforeImage.style.display = 'block';
+        generatedImage.style.display = 'block';
 
         comparisonArea.style.display = 'grid';
 
