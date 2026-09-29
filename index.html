@@ -203,6 +203,19 @@
         Generate Preview
       </button>
 
+      <div id="generationStatus" style="margin-top: 20px;"></div>
+
+      <img
+        id="generatedImage"
+        style="
+        width: 100%;
+        margin-top: 20px;
+        border-radius: 12px;
+        display: none;
+        "
+        alt="Generated hair color preview"
+        >
+      
     </div>
 
   </div>
@@ -279,14 +292,70 @@
 
     }
 
-    generateButton.addEventListener('click', function() {
+    generateButton.addEventListener('click', async function() {
+  const file = photoInput.files[0];
 
-      alert(
-        'AI generation will be connected next.\n\nHair color: '
-        + selectedColor
-      );
+  if (!file || !selectedColor) {
+    return;
+  }
 
-    });
+  const generationStatus = document.getElementById('generationStatus');
+  const generatedImage = document.getElementById('generatedImage');
+
+  generationStatus.textContent = 'Generating your preview...';
+  generatedImage.style.display = 'none';
+  generateButton.disabled = true;
+
+  try {
+    const reader = new FileReader();
+
+    reader.onload = async function() {
+      try {
+        const imageBase64 = reader.result;
+
+        const response = await fetch('/api/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            imageBase64: imageBase64,
+            color: selectedColor
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || 'Generation failed');
+        }
+
+        generatedImage.src = data.image;
+        generatedImage.style.display = 'block';
+        generationStatus.textContent = 'Preview generated!';
+
+      } catch (error) {
+        generationStatus.textContent =
+          'Generation failed: ' + error.message;
+      } finally {
+        generateButton.disabled = false;
+      }
+    };
+
+    reader.onerror = function() {
+      generationStatus.textContent = 'Could not read the photo.';
+      generateButton.disabled = false;
+    };
+
+    reader.readAsDataURL(file);
+
+  } catch (error) {
+    generationStatus.textContent =
+      'Generation failed: ' + error.message;
+
+    generateButton.disabled = false;
+  }
+});
 
   </script>
 
