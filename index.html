@@ -4,42 +4,291 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hair Color Preview</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      color: #222;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: white;
+      padding: 24px;
+      border-radius: 18px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .upload-label {
+      display: block;
+      padding: 16px;
+      border: 2px dashed #ccc;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #photoInput {
+      display: none;
+    }
+
+    #preview {
+      width: 100%;
+      margin-top: 20px;
+      border-radius: 12px;
+      display: none;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin-top: 30px;
+    }
+
+    .colors {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .color-option {
+      border: 2px solid transparent;
+      background: #f3f3f3;
+      border-radius: 12px;
+      padding: 10px 4px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .color-option.selected {
+      border-color: #222;
+      background: #fff;
+    }
+
+    .color-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      margin: 0 auto 7px;
+      border: 1px solid #ccc;
+    }
+
+    #selectedColor {
+      margin-top: 15px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    #generateButton {
+      width: 100%;
+      margin-top: 25px;
+      padding: 16px;
+      border: 0;
+      border-radius: 12px;
+      background: #111;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #generateButton:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>Try Your New Hair Color</h1>
-  <p>See your new look before you dye your hair.</p>
 
-  <input
-    type="file"
-    id="photoInput"
-    accept="image/*"
-  >
+  <div class="container">
 
-  <div style="margin-top: 20px;">
-    <img
-      id="preview"
-      style="max-width: 300px; display: none;"
-      alt="Selected photo preview"
-    >
+    <h1>Try Your New Hair Color</h1>
+
+    <p class="subtitle">
+      See your new look before you dye your hair.
+    </p>
+
+    <div class="card">
+
+      <label class="upload-label" for="photoInput">
+        Upload your photo
+      </label>
+
+      <input
+        type="file"
+        id="photoInput"
+        accept="image/*"
+      >
+
+      <img
+        id="preview"
+        alt="Your uploaded photo"
+      >
+
+      <h2>Choose your hair color</h2>
+
+      <div class="colors">
+
+        <button class="color-option" data-color="Brown">
+          <div class="color-circle" style="background:#6f4e37;"></div>
+          Brown
+        </button>
+
+        <button class="color-option" data-color="Black">
+          <div class="color-circle" style="background:#111;"></div>
+          Black
+        </button>
+
+        <button class="color-option" data-color="Blonde">
+          <div class="color-circle" style="background:#e6c77b;"></div>
+          Blonde
+        </button>
+
+        <button class="color-option" data-color="Red">
+          <div class="color-circle" style="background:#9b2c2c;"></div>
+          Red
+        </button>
+
+        <button class="color-option" data-color="Copper">
+          <div class="color-circle" style="background:#b45f3c;"></div>
+          Copper
+        </button>
+
+        <button class="color-option" data-color="Silver">
+          <div class="color-circle" style="background:#c0c0c0;"></div>
+          Silver
+        </button>
+
+        <button class="color-option" data-color="Pink">
+          <div class="color-circle" style="background:#e89ab5;"></div>
+          Pink
+        </button>
+
+        <button class="color-option" data-color="Blue">
+          <div class="color-circle" style="background:#4169a1;"></div>
+          Blue
+        </button>
+
+      </div>
+
+      <div id="selectedColor">
+        No color selected
+      </div>
+
+      <button id="generateButton" disabled>
+        Generate Preview
+      </button>
+
+    </div>
+
   </div>
 
   <script>
-    const photoInput = document.getElementById('photoInput');
-    const preview = document.getElementById('preview');
+
+    const photoInput =
+      document.getElementById('photoInput');
+
+    const preview =
+      document.getElementById('preview');
+
+    const colorOptions =
+      document.querySelectorAll('.color-option');
+
+    const selectedColorText =
+      document.getElementById('selectedColor');
+
+    const generateButton =
+      document.getElementById('generateButton');
+
+    let photoSelected = false;
+    let selectedColor = null;
 
     photoInput.addEventListener('change', function () {
+
       const file = photoInput.files[0];
 
       if (!file) {
         return;
       }
 
-      const imageUrl = URL.createObjectURL(file);
+      const imageUrl =
+        URL.createObjectURL(file);
 
       preview.src = imageUrl;
       preview.style.display = 'block';
+
+      photoSelected = true;
+
+      updateButton();
+
     });
+
+    colorOptions.forEach(function(option) {
+
+      option.addEventListener('click', function() {
+
+        colorOptions.forEach(function(item) {
+          item.classList.remove('selected');
+        });
+
+        option.classList.add('selected');
+
+        selectedColor =
+          option.dataset.color;
+
+        selectedColorText.textContent =
+          'Selected: ' + selectedColor;
+
+        updateButton();
+
+      });
+
+    });
+
+    function updateButton() {
+
+      if (photoSelected && selectedColor) {
+        generateButton.disabled = false;
+      } else {
+        generateButton.disabled = true;
+      }
+
+    }
+
+    generateButton.addEventListener('click', function() {
+
+      alert(
+        'AI generation will be connected next.\n\nHair color: '
+        + selectedColor
+      );
+
+    });
+
   </script>
+
 </body>
 </html>
