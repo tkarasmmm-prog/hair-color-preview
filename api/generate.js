@@ -40,21 +40,22 @@ export default async function handler(req, res) {
       `Do not change the person's identity or hairstyle.`;
 
     const response = await fetch(
-      'https://router.huggingface.co/fal-ai/fal-ai/flux-kontext/dev',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          inputs: imageBase64,
-          parameters: {
-            prompt: prompt,
-          },
-        }),
-      }
-    );
+  'https://router.huggingface.co/fal-ai/fal-ai/flux-kontext/dev',
+  {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      prompt: prompt,
+      image_url: imageBase64,
+      sync_mode: true,
+      num_images: 1,
+      output_format: 'jpeg'
+    }),
+  }
+);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -66,17 +67,24 @@ export default async function handler(req, res) {
       });
     }
 
-    const imageBuffer = Buffer.from(
-      await response.arrayBuffer()
-    );
+    const data = await response.json();
 
-    const resultBase64 =
-      `data:image/png;base64,${imageBuffer.toString('base64')}`;
+if (
+  !data.images ||
+  !data.images[0] ||
+  !data.images[0].url
+) {
+  return res.status(500).json({
+    success: false,
+    message: 'No generated image returned',
+    details: JSON.stringify(data),
+  });
+}
 
-    return res.status(200).json({
-      success: true,
-      image: resultBase64,
-    });
+return res.status(200).json({
+  success: true,
+  image: data.images[0].url,
+});
 
   } catch (error) {
     return res.status(500).json({
