@@ -205,16 +205,59 @@
 
       <div id="generationStatus" style="margin-top: 20px;"></div>
 
-      <img
-        id="generatedImage"
-        style="
+<div
+  id="comparisonArea"
+  style="
+    display: none;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 20px;
+  "
+>
+
+  <div>
+    <div
+      style="
+        font-size: 13px;
+        font-weight: bold;
+        margin-bottom: 8px;
+      "
+    >
+      Before
+    </div>
+
+    <img
+      id="beforeImage"
+      style="
         width: 100%;
-        margin-top: 20px;
         border-radius: 12px;
-        display: none;
-        "
-        alt="Generated hair color preview"
-        >
+      "
+      alt="Before hair color preview"
+    >
+  </div>
+
+  <div>
+    <div
+      style="
+        font-size: 13px;
+        font-weight: bold;
+        margin-bottom: 8px;
+      "
+    >
+      After
+    </div>
+
+    <img
+      id="generatedImage"
+      style="
+        width: 100%;
+        border-radius: 12px;
+      "
+      alt="Generated hair color preview"
+    >
+  </div>
+
+</div>
       
     </div>
 
