@@ -344,9 +344,11 @@
 
   const generationStatus = document.getElementById('generationStatus');
   const generatedImage = document.getElementById('generatedImage');
+  const comparisonArea = document.getElementById('comparisonArea');
+  const beforeImage = document.getElementById('beforeImage');
 
   generationStatus.textContent = 'Generating your preview...';
-  generatedImage.style.display = 'none';
+  comparisonArea.style.display = 'none';
   generateButton.disabled = true;
 
   try {
@@ -377,8 +379,11 @@
           throw new Error(errorMessage);
         }
 
+        beforeImage.src = preview.src;
         generatedImage.src = data.image;
-        generatedImage.style.display = 'block';
+
+        comparisonArea.style.display = 'grid';
+
         generationStatus.textContent = 'Preview generated!';
 
       } catch (error) {
