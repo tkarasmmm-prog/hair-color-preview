@@ -325,9 +325,13 @@
         });
 
         const data = await response.json();
-
+        
         if (!response.ok || !data.success) {
-          throw new Error(data.message || 'Generation failed');
+          const errorMessage =
+            data.details
+            ? `${data.message}: ${data.details}`
+            : (data.message || 'Generation failed');
+          throw new Error(errorMessage);
         }
 
         generatedImage.src = data.image;
