@@ -10,6 +10,36 @@
   <h1>Try Your New Hair Color</h1>
   <p>See your new look before you dye your hair.</p>
 
-  <button>Upload a Photo</button>
+  <input
+    type="file"
+    id="photoInput"
+    accept="image/*"
+  >
+
+  <div style="margin-top: 20px;">
+    <img
+      id="preview"
+      style="max-width: 300px; display: none;"
+      alt="Selected photo preview"
+    >
+  </div>
+
+  <script>
+    const photoInput = document.getElementById('photoInput');
+    const preview = document.getElementById('preview');
+
+    photoInput.addEventListener('change', function () {
+      const file = photoInput.files[0];
+
+      if (!file) {
+        return;
+      }
+
+      const imageUrl = URL.createObjectURL(file);
+
+      preview.src = imageUrl;
+      preview.style.display = 'block';
+    });
+  </script>
 </body>
 </html>
